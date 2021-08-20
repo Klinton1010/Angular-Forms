@@ -1,0 +1,225 @@
+How to do normal Validation
+---------------------------
+Add markup in HTML
+------------------
+<div>
+      <label>Name</label>
+      <input
+        [class.is-invalid]="
+          registrationForms.get('username').invalid &&
+          registrationForms.get('username').touched
+        "
+        formControlName="username"
+        type="text"
+        class="form-control"
+      />
+      <div
+        *ngIf="
+          registrationForms.get('username').invalid &&
+          registrationForms.get('username').touched
+        "
+      >
+        <div
+          *ngIf="registrationForms.get('username').errors?.required"
+          class="text-danger"
+        >
+          Name is required
+        </div>
+        <div
+          *ngIf="registrationForms.get('username').errors?.minlength"
+          class="text-danger"
+        >
+          should be more than 3 letters
+        </div>
+
+ADD code in reactive.ts
+-----------------------
+username:['',[Validators.required,Validators.minLength(3)],
+
+
+How to do Custom Validaton
+--------------------------
+Scenerio:To avoid adding forbidden name  
+
+Step 1
+------
+Add code in ts
+--------------
+username:['',[Validators.required,Validators.minLength(3),forbiddenNameValidator(/pop/)]],
+
+Step 2
+------
+Add code in username-validator.ts
+----------------------------------
+export function forbiddenNameValidator(forbiddenName:RegExp):ValidatorFn{
+    return (control:AbstractControl):
+    {[key:string]:any}|null=>{
+        const forbidden=forbiddenName.test(control.value)
+  return forbidden? {'forbiddenName':{value:control.value}} : null
+    }
+}
+
+Step 3
+------
+Add Code in HTML
+----------------
+
+<div
+          *ngIf="registrationForms.get('username').errors?.forbiddenName"
+          class="text-danger"
+        >
+          {{ registrationForms.get("username").errors?.forbiddenName.value }}
+          name is not allowed
+        </div>
+
+How to do Cross Validaton
+-------------------------
+Scenerio:Check password and Confirm password are same
+
+Step 1
+------
+Add code in HTML
+
+<div>
+      <label>Password</label>
+      <input formControlName="password" type="password" class="form-control" />
+    </div>
+
+    <div>
+      <label>Confirm Password</label>
+      <input
+        [class.is-invalid]="
+          registrationForms.get('confirmPassword').errors?.misMatch
+        "
+        formControlName="confirmPassword"
+        type="password"
+        class="form-control"
+      />
+      <small class="text-danger" *ngIf="registrationForms.errors?.misMatch"
+        >Password do not match</small
+      >
+    </div>
+
+Step 2
+------
+Add logic in password.validator.ts
+------------------------------------
+import { AbstractControl } from "@angular/forms";
+
+
+//It has access to form group level
+export function PasswordValidator(control:AbstractControl):{[key:string]:boolean}|null
+{
+ const password=control.get('password');
+ const confirmPassword=control.get('confirmPassword');
+ if(password?.pristine || confirmPassword?.pristine)
+ {
+     return null
+ }
+ return password && confirmPassword && password.value !== confirmPassword.value ?
+ {'misMatch':true}:null;
+ 
+}
+
+Step 3
+------
+Cofigure it in ts
+
+{validators:PasswordValidator};
+
+How to do Conditional Validaton;
+--------------------------------
+Scenerio :If check the Check box email field should be required field
+
+Step 1
+------
+Add Check box in HTML
+---------------------
+
+<div class="form-check mb-3">
+      <input
+        class="form-check-input"
+        formControlName="subscribe"
+        type="checkbox"
+      />
+      <label class="form-check-label">Send me Promotional Offers</label>
+    </div>
+
+Step 2
+-------
+Reactive.ts
+
+this.registrationForms.get('subscribe')?.valueChanges
+    .subscribe((checks: any)=>{
+      console.log(checks)
+      const email=this.registrationForms?.get('email');
+      if(checks)
+      {
+       email?.setValidators(Validators.required);
+
+      }
+      else
+      {
+        email?.clearValidators();
+      }
+      email?.updateValueAndValidity();
+    })
+
+How to Make Dynamic form
+------------------------
+
+step 1
+------
+import formArray
+
+import { FormBuilder, FormControl, FormGroup,Validator, Validators,FormArray } from '@angular/forms';
+
+Step 2
+------
+Define it in ts(reactive.ts)
+
+alternateEmails:this.fb.array([])
+
+Step 3
+------
+Add getters
+
+get AlternateEmails()
+  {
+    return this.registrationForms.get('alternateEmails') as FormArray
+  }
+
+step 4
+-------
+Pushing into an array
+
+addAlternateEmail()
+  {
+    this.AlternateEmails.push(this.fb.control(''));
+    console.log("Alternatte",this.AlternateEmails)
+  }
+
+Step 5
+-----
+
+Add Button in HTML
+
+<button
+        type="submit"
+        class="btn btn-secondary"
+        (click)="addAlternateEmail()"
+      >
+        Add Alternate Email
+      </button>
+
+Step 6
+------
+Iterate the array in HTML
+
+<div
+        formArrayName="alternateEmails"
+        *ngFor="let email of AlternateEmails.controls; let i = index"
+      >
+        <input type="text" class="form-control" [formControlName]="i" />
+      </div>
+

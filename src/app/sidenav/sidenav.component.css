@@ -1,0 +1,14 @@
+mat-nav-list
+{
+    width: 250px;
+}
+
+.logo img
+{
+  width: 175px;
+}
+
+.list-item-active {
+   background: rgb(150, 150, 238) !important;
+   transition: all 4ms ease;
+}

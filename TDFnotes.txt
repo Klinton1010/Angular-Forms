@@ -1,0 +1,317 @@
+1.set up project 
+
+1.1
+Install Angular cli
+npm install -g @angular/cli
+
+1.2
+Create new Angular Project
+
+ng new my-first-project
+cd my-first-project
+ng serve
+
+
+1.3
+Add Bootstrap Dependency
+-----------------------
+index.html
+
+<link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+
+
+1.4
+Build a form using Bootstrap
+
+Example
+-------
+
+<div class="container-fluid">
+  <h1>Bootcamp Enrollment Form</h1>
+  <form>
+    <div class="form-group">
+      <label for="">Name</label>
+      <input type="text" class="form-control" />
+    </div>
+    </form>
+
+IN Tdf
+-------
+We have Three Directives
+
+ngForm
+ngModel
+ngModelGroup
+
+Add Reference Variable ,ngModel and Name attributes to our form
+---------------------------------------------------------------
+
+<form #userForm="ngForm">
+    {{ userForm.value | json }}
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" class="form-control" name="Name" ngModel />
+    </div>
+</form>
+
+Output
+------
+{ "Name": "" }
+
+Final Output
+------------
+{ "Name": "Hari", "email": "hari@gmail.com", "phone": "07550127370", "subject": "Angular", "timePreference": "morning", "subscription": true }
+
+ngModelGroup
+-------------
+It is for grouping the data 
+
+Example
+-------
+<div ngModelGroup="address">
+      <div class="form-group">
+        <label>Street</label>
+        <input type="text" class="form-control" name="street" ngModel />
+      </div>
+
+      <div class="form-group">
+        <label>City</label>
+        <input type="text" class="form-control" name="city" ngModel />
+      </div>
+
+      <div class="form-group">
+        <label>State</label>
+        <input type="text" class="form-control" name="state" ngModel />
+      </div>
+
+      <div class="form-group">
+        <label>Postel Code</label>
+        <input type="text" class="form-control" name="postel code" ngModel />
+      </div>
+    </div>
+
+Final Output
+------------
+{
+   "address":{
+      "street":"4C CM Palayam 2nd Street",
+      "city":"chennai",
+      "state":"Tamil Nadu",
+      "postel code":"6000019"
+   },
+   "Name":"KLINTON J",
+   "email":"klintonpcb@gmail.com",
+   "phone":"07550127370",
+   "subject":"Angular",
+   "timePreference":"morning",
+   "subscription":true
+}
+
+Creating a Model (user.ts)
+----------------
+
+export class User {
+    constructor(
+    public name:string,
+    public email:string,
+    public phone:number,
+    public subject:string,
+    public timePreference:string,
+    public subscribe:boolean
+    ){}
+}
+
+In app.ts
+---------
+Create a object for Model
+
+ usermodel=new User('Hari','hari@gmail.com',5895696655,'','morning',true);
+
+ In app.html Binding the data in Form Fields
+ -----------
+
+  <form #userForm="ngForm">
+    {{ userForm.value | json }}
+    <hr />
+
+    {{ usermodel | json }}
+    <div class="form-group">
+      <label>Name</label>
+      <input
+        type="text"
+        class="form-control"
+        name="Name"
+        [ngModel]="usermodel.name"
+      />
+    </div>
+
+    </form>
+
+    [ngModel]
+  ------------
+  This is One way Biding from Object to view
+
+  Output-
+  -------
+  Object to view
+  { "Name": "Tom", "email": "hari@gmail.com", "phone": 5895696655, "subject": "", "timePreference": "morning", "subscription": true }
+  
+  view to Object
+  { "name": "Hari", "email": "hari@gmail.com", "phone": 5895696655, "subject": "", "timePreference": "morning", "subscribe": true }
+
+  if you want two way binding go for [(ngModel)]
+  ----------------------------------------------
+
+  <form #userForm="ngForm">
+    {{ userForm.value | json }}
+    <hr />
+
+    {{ usermodel | json }}
+    <div class="form-group">
+      <label>Name</label>
+      <input
+        type="text"
+        class="form-control"
+        name="Name"
+        [(ngModel)]="usermodel.name"
+      />
+    </div>
+
+    </form>
+
+    Output
+    ------
+    { "Name": "Ram Victor", "email": "hari@gmail.com", "phone": 5895696655, "subject": "", "timePreference": "morning", "subscription": true }
+
+    { "name": "Ram Victor", "email": "hari@gmail.com", "phone": 5895696655, "subject": "", "timePreference": "morning", "subscribe": true }
+
+
+    TRACK CONTROL STATE AND VALIDITY
+    ---------------------------------
+
+    state                            class is true      class is false
+     
+    The control has been valid       ng-touched          ng-untouched
+    The control value has changed    ng-dirty            ng-pristine
+    The control value is invalid     ng-valid            ng-invalid
+
+    Example
+    -------
+   <form #userForm="ngForm">
+    <!--{{ userForm.value | json }}-->
+    <hr />
+
+    <!--  {{ usermodel | json }}-->
+    <div class="form-group">
+      <label>Name</label>
+      <input
+        #name
+        required
+        type="text"
+        class="form-control"
+        name="Name"
+        [(ngModel)]="usermodel.name"
+       />
+    </div>
+    {{ name.className }}
+    </form>
+
+    Output
+    -----
+    form-control ng-untouched ng-pristine ng-valid
+
+    ngModel Properties
+    ------------------
+
+    class          property
+
+    ng-untouched    untouched
+    ng-touched      touched
+    ng-pristine     pristine
+    ng-dirty        dirty
+    ng-valid        valid
+    ng-invalid      invalid
+
+    Example
+    -------
+    <div class="form-group">
+      <label>Name</label>
+      <input
+        #name="ngModel"
+        required
+        type="text"
+        class="form-control"
+        name="Name"
+        [(ngModel)]="usermodel.name"
+      />
+    </div>
+    {{ name.untouched }}
+    
+    Output
+    true
+
+  //Validating with visual Feedback
+
+ <div class="form-group">
+      <label>Name</label>
+      <input
+        #name="ngModel"
+        required
+        type="text"
+        [class.is-invalid]="name.invalid && name.touched"
+        class="form-control is-invalid"
+        name="Name"
+        [(ngModel)]="usermodel.name"
+      />
+
+//Displaying Error Message
+--------------------------
+<div class="form-group">
+      <label>Name</label>
+      <input
+        #name="ngModel"
+        required
+        type="text"
+        [class.is-invalid]="name.invalid && name.touched"
+        class="form-control is-invalid"
+        name="Name"
+        [(ngModel)]="usermodel.name"
+      />
+      <small [class.d-none]="name.valid || name.untouched" class="text-danger"
+        >Name is required</small
+      >
+    </div>
+
+class.is-invalid --It gives Red border If form value is invalid or toucheed
+class.d-none-------Dont apply any class if following codition is true
+
+
+For Multiple Validating 
+-----------------------
+
+<div class="form-group">
+      <label>Phone</label>
+      <input
+        required
+        #phone="ngModel"
+        pattern="^\d{10}$"
+        [class.is-invalid]="phone.invalid && phone.touched"
+        type="tel"
+        class="form-control"
+        name="phone"
+        [(ngModel)]="usermodel.phone"
+      />
+      <div *ngIf="phone.errors && (phone.invalid || phone.touched)">
+        <small class="text-danger" *ngIf="phone.errors.required"
+          >Phone Number is required</small
+        >
+        <small class="text-danger" *ngIf="phone.errors.pattern"
+          >Phone Number Must be 10 digits</small
+        >
+      </div>
+    </div>

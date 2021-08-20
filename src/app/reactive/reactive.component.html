@@ -1,0 +1,142 @@
+<div class="container-fluid">
+  <h1>Registration form in Reactive</h1>
+  {{ registrationForms.value | json }}
+  <form [formGroup]="registrationForms" (ngSubmit)="submitMyForm()">
+    <div>
+      <label>Name</label>
+      <input
+        [class.is-invalid]="
+          registrationForms.get('username').invalid &&
+          registrationForms.get('username').touched
+        "
+        formControlName="username"
+        type="text"
+        class="form-control"
+      />
+      <!-- <small
+        [class.d-none]="
+          registrationForms.get('username').valid ||
+          registrationForms.get('username').untouched
+        "
+        class="text-danger"
+        >Name is Required
+      </small>-->
+
+      <div
+        *ngIf="
+          registrationForms.get('username').invalid &&
+          registrationForms.get('username').touched
+        "
+      >
+        <div
+          *ngIf="registrationForms.get('username').errors?.required"
+          class="text-danger"
+        >
+          Name is required
+        </div>
+        <div
+          *ngIf="registrationForms.get('username').errors?.minlength"
+          class="text-danger"
+        >
+          should be more than 3 letters
+        </div>
+
+        <div
+          *ngIf="registrationForms.get('username').errors?.forbiddenName"
+          class="text-danger"
+        >
+          {{ registrationForms.get("username").errors?.forbiddenName.value }}
+          name is not allowed
+        </div>
+      </div>
+    </div>
+    <div>
+      <label>Email</label>
+      <button
+        type="submit"
+        class="btn btn-secondary"
+        (click)="addAlternateEmail()"
+      >
+        Add Alternate Email
+      </button>
+      <input
+        [class.is-invalid]="
+          registrationForms.get('email').invalid &&
+          registrationForms.get('email').touched
+        "
+        type="email"
+        formControlName="email"
+        class="form-control"
+      />
+      <small
+        class="text-danger"
+        [class.d-none]="
+          registrationForms.get('email').valid ||
+          registrationForms.get('email').untouched
+        "
+        >Email is Required</small
+      >
+      <div
+        formArrayName="alternateEmails"
+        *ngFor="let email of AlternateEmails.controls; let i = index"
+      >
+        <input type="text" class="form-control" [formControlName]="i" />
+      </div>
+    </div>
+    <div class="form-check mb-3">
+      <input
+        class="form-check-input"
+        formControlName="subscribe"
+        type="checkbox"
+      />
+      <label class="form-check-label">Send me Promotional Offers</label>
+    </div>
+    <div>
+      <label>Password</label>
+      <input formControlName="password" type="password" class="form-control" />
+    </div>
+
+    <div>
+      <label>Confirm Password</label>
+      <input
+        [class.is-invalid]="
+          registrationForms.get('confirmPassword').errors?.misMatch
+        "
+        formControlName="confirmPassword"
+        type="password"
+        class="form-control"
+      />
+      <small class="text-danger" *ngIf="registrationForms.errors?.misMatch"
+        >Password do not match</small
+      >
+    </div>
+
+    <div formGroupName="address">
+      <div class="form-group">
+        <label>City</label>
+        <input formControlName="city" type="text" class="form-control" />
+      </div>
+
+      <div class="form-group">
+        <label>State</label>
+        <input formControlName="state" type="text" class="form-control" />
+      </div>
+
+      <div class="form-group">
+        <label>Postal Code</label>
+        <input formControlName="postal" type="text" class="form-control" />
+      </div>
+    </div>
+
+    <button
+      [disabled]="!registrationForms.valid"
+      class="btn btn-primary"
+      type="submit"
+    >
+      Register
+    </button>
+    <button (click)="loadApi()" class="btn btn-secondary" type="button">
+      Load API
+    </button>
+  </form>
+</div>

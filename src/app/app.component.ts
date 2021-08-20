@@ -6,5 +6,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  color='blue'
   title = 'AngularWebsite';
+  showFiller=false;
+  sideBarOpen = false;
+  
+  sideBarToggler() {
+    this.sideBarOpen = !this.sideBarOpen;
+  }
 }
